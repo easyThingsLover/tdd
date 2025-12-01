@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 
 namespace TagsCloudVisualization;
@@ -10,12 +11,70 @@ public class CircularCloudLayouterTest
 {
     private CircularCloudLayouter layouter;
     private Point center;
+    const int imageWidth = 1100;
+    const int imageHeight = 900;
 
     [SetUp]
     public void SetUp()
     {
         center = new Point(100, 100);
         layouter = new CircularCloudLayouter(center);
+    }
+    [TearDown]
+    public void TearDown()
+    {
+        var result = TestContext.CurrentContext.Result;
+        if (result.Outcome.Status != TestStatus.Failed) return;
+        var testName = TestContext.CurrentContext.Test.Name;
+        var directory = TestContext.CurrentContext.TestDirectory;
+        var fileName = $"{testName}_tagCloud.png";
+        var path = Path.Combine(directory, fileName);
+        
+        var visualizer = new Visualizer(
+            new CircularCloudLayouter(new Point(imageWidth / 2, imageHeight / 2)));
+            
+        visualizer.DrawCloud(
+            new[]         {
+                "Football", "Soccer", "Basketball", "Baseball", "Hockey",
+                "Tennis", "Volleyball", "Rugby", "Cricket", "Golf",
+                "Boxing", "MMA", "Wrestling", "Cycling", "Running",
+                "Marathon", "Sprint", "Swimming", "Diving", "Rowing",
+                "Skating", "Skiing", "Snowboarding", "Surfing", "Skateboard",
+                "Climbing", "Bouldering", "Gymnastics", "Karate", "Judo",
+                "Taekwondo", "Badminton", "TableTennis", "Handball", "WaterPolo",
+                "Lacrosse", "Softball", "AmericanFootball", "Fencing", "Archery",
+                "Triathlon", "Biathlon", "Decathlon", "Heptathlon", "Crossfit",
+                "Powerlifting", "Weightlifting", "Bodybuilding", "Yoga", "Pilates",
+                "Aerobics", "Zumba", "Parkour", "Freerun", "Motorsport",
+                "FormulaOne", "Rally", "Karting", "Esports", "Chess",
+                "Darts", "Bowling", "Snooker", "Billiards", "Polo",
+                "Kayaking", "Canoeing", "Windsurfing", "Kitesurfing", "Paragliding",
+                "Mountaineering", "TrailRunning", "Ultramarathon", "NordicWalking", "Orienteering",
+                "Stadium", "Arena", "Coach", "Referee", "Captain",
+                "Team", "League", "Tournament", "Championship", "Playoffs",
+                "Fitness", "Training", "Warmup", "Cooldown", "Stretching",
+                "Goal", "Assist", "Penalty", "Offense", "Defense",
+                "SprintFinish", "Record", "Medal", "Victory", "FairPlay"
+            },
+            path,
+            imageWidth,
+            imageHeight,
+            Color.FromArgb(255, 102, 0),
+            Color.FromArgb(0, 28, 39),
+            new("Times New Roman", 16));
+
+        TestContext.Out.WriteLine($"Tag cloud visualization saved to file {path}");
+    }
+    
+    [Test]
+    public void FailedTest()
+    {
+        var size = new Size(20, 20);
+
+        var rect = layouter.PutNextRectangle(size);
+
+        var rectCenter = new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
+        rectCenter.Should().NotBe(center);
     }
 
     [Test]
@@ -107,13 +166,16 @@ public class CircularCloudLayouterTest
             "Ecosystem", "Nature", "Landscape", "Horizon", "Sky"
         };
 
-        var visualizer = new Visualizer();
+        var visualizer = new Visualizer(new CircularCloudLayouter(new Point(imageWidth / 2, imageHeight / 2)));
 
         visualizer.DrawCloud(
-            words,
+            words, 
             "wordCloud.png",
-            imageWidth: 800,
-            imageHeight: 800);
+            imageWidth,
+            imageHeight,
+            Color.FromArgb(255, 102, 0),
+            Color.FromArgb(0, 28, 39),
+            new("Times New Roman", 16));
     }
         
     [Test]
@@ -143,13 +205,16 @@ public class CircularCloudLayouterTest
             "SprintFinish", "Record", "Medal", "Victory", "FairPlay"
         };
 
-        var visualizer = new Visualizer();
+        var visualizer = new Visualizer(new CircularCloudLayouter(new Point(imageWidth / 2, imageHeight / 2)));
 
         visualizer.DrawCloud(
-            words,
+            words, 
             "wordCloudSports.png",
-            imageWidth: 1000,
-            imageHeight: 800);
+            imageWidth,
+            imageHeight,
+            Color.FromArgb(255, 102, 0),
+            Color.FromArgb(0, 28, 39),
+            new("Times New Roman", 16));
     }
 
     [Test]
@@ -189,13 +254,16 @@ public class CircularCloudLayouterTest
                 
         };
 
-        var visualizer = new Visualizer();
+        var visualizer = new Visualizer(new CircularCloudLayouter(new Point(imageWidth / 2, imageHeight / 2)));
 
         visualizer.DrawCloud(
             words, 
             "wordCloudMedicine.png",
-            imageWidth: 1100,
-            imageHeight: 900);
+            imageWidth,
+            imageHeight,
+            Color.FromArgb(255, 102, 0),
+            Color.FromArgb(0, 28, 39),
+            new("Times New Roman", 16));
     }
     
     private static Point GetCenter(Rectangle rectangle)

@@ -4,8 +4,8 @@ namespace TagsCloudVisualization;
 
 public class SpiralPointGenerator(Point center)
 {
-    private const double AngleStep = 0.05;
-    private const double RadiusStep = 1;
+    private const double AngleStepRadians = 0.05;
+    private const double RadiusGrowthRate = 0.1;
     private double angle;
     private double radius;
 
@@ -14,8 +14,8 @@ public class SpiralPointGenerator(Point center)
         var x = center.X + (int)(radius * Math.Cos(angle));
         var y = center.Y + (int)(radius * Math.Sin(angle));
 
-        angle += AngleStep;
-        radius += RadiusStep / (2 * Math.PI);
+        angle += AngleStepRadians;
+        radius = RadiusGrowthRate * angle;
 
         return new Point(x, y);
     }
